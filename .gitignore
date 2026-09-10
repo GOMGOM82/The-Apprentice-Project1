@@ -1,0 +1,39 @@
+# 임시 작업 파일 폴더 (사용자 지정 요구사항)
+temp/*
+!temp/.gitkeep
+
+# 원천 대용량 데이터 및 압축 파일
+data/raw/*
+!data/raw/.gitkeep
+data/processed/*
+!data/processed/.gitkeep
+*.zip
+*.tar.gz
+*.part*
+
+# Python & 가상환경
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.env
+.venv
+env/
+venv/
+ENV/
+
+# Jupyter Notebook 캐시
+.ipynb_checkpoints/
+
+# 모델 체크포인트 및 로그
+checkpoints/
+logs/
+*.pt
+*.pth
+*.onnx
+*.pkl
+
+# OS 생성 파일
+.DS_Store
+Thumbs.db
+
