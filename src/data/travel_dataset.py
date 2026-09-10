@@ -153,3 +153,4 @@ if __name__ == "__main__":
     print(data.head())
     print("\nTarget Statistics (TOTAL_EXPENDITURE):")
     print(data["TOTAL_EXPENDITURE"].describe())
+
