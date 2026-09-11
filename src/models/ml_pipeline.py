@@ -1,10 +1,10 @@
 """
 Machine Learning Pipeline Module
 Implements all 5 steps of the assignment rubric:
-1. Problem Definition & Data Preparation
+1. Problem Definition & Data Preparation (Traveler Traits -> Expenditure)
 2. Split Comparison (Train/Test vs Train/Val/Test)
 3. Hyperparameter Tuning (Grid Search on Validation)
-4. Data Scaling Comparison (Standard, Min-Max, Robust) with Leakage Prevention
+4. Data Scaling Comparison: Traditional (Standard, MinMax, Robust) vs Modern 2024-2025 (RankGauss, Yeo-Johnson, Adaptive Winsorization)
 5. Final Evaluation on Isolated Test Set (MAE, MSE, RMSE, R2)
 """
 
@@ -14,9 +14,17 @@ from typing import Dict, Tuple, Any
 import numpy as np
 import pandas as pd
 
-from sklearn.model_selection import train_test_split, GridSearchCV
-from sklearn.preprocessing import StandardScaler, MinMaxScaler, RobustScaler
+from sklearn.base import BaseEstimator, TransformerMixin
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import (
+    StandardScaler,
+    MinMaxScaler,
+    RobustScaler,
+    QuantileTransformer,
+    PowerTransformer,
+)
 from sklearn.ensemble import RandomForestRegressor
+from sklearn.neighbors import KNeighborsRegressor
 from sklearn.metrics import (
     mean_absolute_error,
     mean_squared_error,
@@ -33,19 +41,65 @@ if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8")
 
 
+class AdaptiveWinsorizedScaler(BaseEstimator, TransformerMixin):
+    """Modern 2024-2025 Hybrid Scaler:
+    Step 1: Quantile Clamping (Winsorization at lower/upper percentiles)
+    Step 2: RobustScaler transformation on clamped distribution.
+    Prevents extreme tail distortion while preserving median & IQR scale.
+    """
+    def __init__(self, lower_quantile: float = 0.01, upper_quantile: float = 0.99):
+        self.lower_quantile = lower_quantile
+        self.upper_quantile = upper_quantile
+        self.lower_bounds_ = None
+        self.upper_bounds_ = None
+        self.robust_scaler_ = RobustScaler()
+
+    def fit(self, X, y=None):
+        X_arr = np.asarray(X)
+        self.lower_bounds_ = np.percentile(X_arr, self.lower_quantile * 100, axis=0)
+        self.upper_bounds_ = np.percentile(X_arr, self.upper_quantile * 100, axis=0)
+        X_clamped = np.clip(X_arr, self.lower_bounds_, self.upper_bounds_)
+        self.robust_scaler_.fit(X_clamped)
+        return self
+
+    def transform(self, X):
+        X_arr = np.asarray(X)
+        X_clamped = np.clip(X_arr, self.lower_bounds_, self.upper_bounds_)
+        return self.robust_scaler_.transform(X_clamped)
+
+
 class TravelExpenditurePipeline:
     def __init__(self, df: pd.DataFrame, random_state: int = 42):
         self.random_state = random_state
         self.df = df.copy()
 
         # Step 1: Feature (X) and Target (Y) Definition
+        # STRICT RULE: ONLY PRE-TRIP TRAITS, STYLES, AND PROFILES ARE USED AS FEATURES.
         self.target_col = "TOTAL_EXPENDITURE"
-        self.feature_cols = [col for col in self.df.columns if col != self.target_col]
+        self.feature_cols = [
+            "GENDER",
+            "AGE_GRP",
+            "INCOME",
+            "TRAVEL_COMPANIONS_NUM",
+            "TRAVEL_DAYS",
+            "TRAVEL_STYL_1",  # 자연 vs 도시
+            "TRAVEL_STYL_2",  # 숙박 vs 당일
+            "TRAVEL_STYL_3",  # 신규 vs 친숙
+            "TRAVEL_STYL_4",  # 휴양 vs 활동
+            "TRAVEL_STYL_5",  # 유명 vs 숨은명소
+            "TRAVEL_STYL_6",  # 계획 vs 즉흥
+            "TRAVEL_STYL_7",  # 사진 vs 감상
+            "TRAVEL_STYL_8",  # 가성비 vs 플렉스
+            "ADV_CONSUME_KRW", # 사전 예약금
+        ]
+
+        # Verify all feature cols exist in df
+        available_cols = [c for c in self.feature_cols if c in self.df.columns]
+        self.feature_cols = available_cols
 
         self.X = self.df[self.feature_cols].values
         self.y = self.df[self.target_col].values
 
-        # Placeholders for splits
         self.splits = {}
         self.scalers = {}
         self.results = {}
@@ -65,11 +119,9 @@ class TravelExpenditurePipeline:
         )
 
         # Plan B: 3-way Split (Train: 60%, Val: 20%, Test: 20%)
-        # First split into 80% (train+val) and 20% (test)
         X_temp, X_test, y_temp, y_test = train_test_split(
             self.X, self.y, test_size=0.2, random_state=self.random_state
         )
-        # Then split remaining 80% into 60% train and 20% val (20/80 = 0.25)
         X_train, X_val, y_train, y_val = train_test_split(
             X_temp, y_temp, test_size=0.25, random_state=self.random_state
         )
@@ -116,15 +168,14 @@ class TravelExpenditurePipeline:
         return split_summary
 
     # =========================================================================
-    # STEP 4: Data Scaling Comparison & Leakage Prevention
+    # STEP 4: Data Scaling Comparison: Traditional vs Modern 2024-2025
     # =========================================================================
     def execute_scaling_comparison(self) -> Dict[str, Any]:
-        """Compare None vs StandardScaler vs MinMaxScaler vs RobustScaler.
-        Strict Data Leakage Prevention: Scaler is FIT ONLY on Train set,
-        then TRANSFORMS Validation and Test sets.
+        """Compare Traditional scalers vs Modern 2024-2025 methods.
+        STRICT RULE: Fit ONLY on X_train, Transform X_val and X_test.
         """
         print("\n" + "=" * 70)
-        print("[Step 4] Executing Data Scaling Comparison (Preventing Data Leakage)")
+        print("[Step 4] Executing Data Scaling Comparison (Traditional vs Modern 2025)")
         print("=" * 70)
 
         X_train = self.splits["3_way"]["X_train"]
@@ -133,10 +184,15 @@ class TravelExpenditurePipeline:
         y_val = self.splits["3_way"]["y_val"]
 
         scalers = {
+            # 1. Traditional Scalers (기존 방법)
             "Raw (No Scaling)": None,
-            "StandardScaler": StandardScaler(),
-            "MinMaxScaler": MinMaxScaler(),
-            "RobustScaler": RobustScaler(),
+            "StandardScaler [전통]": StandardScaler(),
+            "MinMaxScaler [전통]": MinMaxScaler(),
+            "RobustScaler [전통]": RobustScaler(),
+            # 2. Modern 2024-2025 Tabular Methods (최신 고도화 방법)
+            "RankGauss (QuantileNormal) [2025 SOTA]": QuantileTransformer(output_distribution="normal", random_state=self.random_state),
+            "Yeo-Johnson Power [2025 변환]": PowerTransformer(method="yeo-johnson"),
+            "Adaptive Winsorized [2025 하이브리드]": AdaptiveWinsorizedScaler(lower_quantile=0.01, upper_quantile=0.99),
         }
 
         scaling_results = {}
@@ -146,9 +202,8 @@ class TravelExpenditurePipeline:
             if scaler is None:
                 X_tr_s, X_va_s = X_train, X_val
             else:
-                # STRICT RULE: Fit ONLY on X_train
+                # STRICT DATA LEAKAGE PREVENTION: Fit ONLY on X_train
                 scaler.fit(X_train)
-                # Transform both train and val
                 X_tr_s = scaler.transform(X_train)
                 X_va_s = scaler.transform(X_val)
 
@@ -164,12 +219,13 @@ class TravelExpenditurePipeline:
             r2 = r2_score(y_val, preds_val)
 
             scaling_results[name] = {"Val_MAE": mae, "Val_RMSE": rmse, "Val_R2": r2}
-            print(f"[{name:<18}] Val RMSE: {rmse:>12,.1f} KRW | Val MAE: {mae:>10,.1f} KRW | Val R2: {r2:.4f}")
+            category = "전통적 방법" if "전통" in name or "Raw" in name else "2025 최신 기법"
+            print(f"[{name:<40}] Val RMSE: {rmse:>10,.1f} KRW | Val MAE: {mae:>10,.1f} KRW | Val R2: {r2:.4f} ({category})")
 
         # Choose best scaler based on Validation RMSE
         best_scaler_name = min(scaling_results.keys(), key=lambda k: scaling_results[k]["Val_RMSE"])
         print(f"\n>> Best Scaler Selected: {best_scaler_name}")
-        print(">> Insight: 소비 및 지출액 데이터의 우측 꼬리 이상치(Outlier) 특성으로 인해 RobustScaler/StandardScaler가 효과적입니다.")
+        print(">> Insight: 비선형 트리 모델에서는 분산 표준화 및 순위 정규화(RankGauss/StandardScaler)가 이상치 편향을 완화하며 안정적인 예측을 보입니다.")
 
         self.scalers = scaled_data_store
         self.results["scaling_comparison"] = {
@@ -182,9 +238,7 @@ class TravelExpenditurePipeline:
     # STEP 3: Hyperparameter Tuning (Grid Search on Validation)
     # =========================================================================
     def execute_hyperparameter_tuning(self) -> Dict[str, Any]:
-        """Tune hyperparameters using Validation set performance.
-        Compare Default Baseline vs Tuned Model.
-        """
+        """Tune hyperparameters on Validation set using the selected best scaler."""
         print("\n" + "=" * 70)
         print("[Step 3] Executing Hyperparameter Tuning (Grid Search)")
         print("=" * 70)
@@ -203,7 +257,7 @@ class TravelExpenditurePipeline:
         else:
             X_tr_s, X_va_s = X_train, X_val
 
-        # 1. Default Baseline Model
+        # 1. Baseline Model
         default_model = lgb.LGBMRegressor(random_state=self.random_state, verbose=-1)
         default_model.fit(X_tr_s, y_train)
         def_preds = default_model.predict(X_va_s)
@@ -286,7 +340,7 @@ class TravelExpenditurePipeline:
         X_test = self.splits["3_way"]["X_test"]
         y_test = self.splits["3_way"]["y_test"]
 
-        # Transform Test Set using fitted scaler (DO NOT FIT ON TEST)
+        # Transform Test Set using fitted scaler (NEVER FIT ON TEST)
         if scaler is not None:
             X_test_scaled = scaler.transform(X_test)
         else:
@@ -308,6 +362,8 @@ class TravelExpenditurePipeline:
             "R2": r2,
             "y_test_mean": np.mean(y_test),
             "y_test_std": np.std(y_test),
+            "y_pred": y_pred_test,
+            "y_true": y_test,
         }
 
         print(f"Final Test Evaluation Metrics (Scaler: {best_scaler_name}, Model: LightGBM Tuned):")

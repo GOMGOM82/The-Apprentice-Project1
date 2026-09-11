@@ -1,5 +1,6 @@
 """
 Unit Tests for Machine Learning Pipeline & Data Leakage Prevention
+Verifies both Traditional and Modern 2025 Scalers.
 """
 
 import sys
@@ -12,7 +13,7 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
 from src.data.travel_dataset import load_travel_dataset
-from src.models.ml_pipeline import TravelExpenditurePipeline
+from src.models.ml_pipeline import TravelExpenditurePipeline, AdaptiveWinsorizedScaler
 from sklearn.preprocessing import StandardScaler, RobustScaler
 
 
@@ -28,35 +29,47 @@ def test_data_leakage_prevention():
     X_val = pipeline.splits["3_way"]["X_val"]
     X_test = pipeline.splits["3_way"]["X_test"]
 
-    # Independent fit on X_train
+    # 1. Test Traditional RobustScaler
     ref_scaler = RobustScaler()
     ref_scaler.fit(X_train)
 
-    # Combined fit (with test data - which would be a leak)
     leaked_scaler = RobustScaler()
     leaked_scaler.fit(np.vstack([X_train, X_test]))
 
-    # Execute pipeline scaling
     pipeline.execute_scaling_comparison()
-    pipeline_scaler = pipeline.scalers["RobustScaler"]["scaler"]
+    pipeline_scaler = pipeline.scalers["RobustScaler [전통]"]["scaler"]
 
-    # 1. Pipeline scaler must match ref_scaler EXACTLY
     np.testing.assert_allclose(
         pipeline_scaler.center_,
         ref_scaler.center_,
-        err_msg="Scaler center_ deviates from pure train fit! Data leakage detected.",
+        err_msg="RobustScaler center_ deviates from pure train fit! Data leakage detected.",
     )
     np.testing.assert_allclose(
         pipeline_scaler.scale_,
         ref_scaler.scale_,
-        err_msg="Scaler scale_ deviates from pure train fit! Data leakage detected.",
+        err_msg="RobustScaler scale_ deviates from pure train fit! Data leakage detected.",
     )
-
-    # 2. Pipeline scaler must NOT match the leaked scaler
     assert not np.allclose(pipeline_scaler.center_, leaked_scaler.center_), (
         "Pipeline scaler matches leaked scaler! Leakage check failed."
     )
-    print("[PASS] Data leakage prevention test passed! Scaler is strictly isolated to Train set.")
+
+    # 2. Test Modern 2025 Adaptive Winsorized Scaler
+    modern_ref = AdaptiveWinsorizedScaler()
+    modern_ref.fit(X_train)
+    modern_pipeline = pipeline.scalers["Adaptive Winsorized [2025 하이브리드]"]["scaler"]
+
+    np.testing.assert_allclose(
+        modern_pipeline.lower_bounds_,
+        modern_ref.lower_bounds_,
+        err_msg="Modern Scaler lower bounds deviate! Data leakage detected.",
+    )
+    np.testing.assert_allclose(
+        modern_pipeline.upper_bounds_,
+        modern_ref.upper_bounds_,
+        err_msg="Modern Scaler upper bounds deviate! Data leakage detected.",
+    )
+
+    print("[PASS] Data leakage prevention test passed for both Traditional and 2025 Modern Scalers!")
 
 
 def test_test_set_isolation():
@@ -71,7 +84,6 @@ def test_test_set_isolation():
     pipeline.execute_scaling_comparison()
     pipeline.execute_hyperparameter_tuning()
 
-    # Verify X_test was never modified during scaling or tuning
     assert pipeline.splits["3_way"]["X_test"].shape == orig_test_shape
     np.testing.assert_array_equal(pipeline.splits["3_way"]["X_test"][0], orig_test_first_row)
     print("[PASS] Test set isolation verified. Test set was not accessed during tuning.")
@@ -99,4 +111,3 @@ if __name__ == "__main__":
     test_test_set_isolation()
     test_evaluation_metrics()
     print("All unit tests passed successfully!")
-
