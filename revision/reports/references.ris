@@ -1,4 +1,16 @@
 TY  - JOUR
+TI  - Random search for hyper-parameter optimization
+AU  - Bergstra, James
+AU  - Bengio, Yoshua
+JO  - Journal of Machine Learning Research
+PY  - 2012
+VL  - 13
+IS  - 10
+SP  - 281
+EP  - 305
+ER  - 
+
+TY  - JOUR
 TI  - Random forests
 AU  - Breiman, Leo
 JO  - Machine Learning
@@ -8,6 +20,35 @@ IS  - 1
 SP  - 5
 EP  - 32
 DO  - 10.1023/A:1010933404324
+ER  - 
+
+TY  - BOOK
+TI  - The elements of statistical learning: Data mining, inference, and prediction
+AU  - Hastie, Trevor
+AU  - Tibshirani, Robert
+AU  - Friedman, Jerome
+PB  - Springer
+PY  - 2009
+ED  - 2nd
+DO  - 10.1007/978-0-387-84858-7
+ER  - 
+
+TY  - JOUR
+TI  - Accurate predictions on small data with a tabular foundation model
+AU  - Hollmann, Noah
+AU  - Müller, Samuel
+AU  - Purucker, Lennart
+AU  - Krishnakumar, Arjun
+AU  - K域fer, Max
+AU  - Hoo, Shi Bin
+AU  - Schirrmeister, Robin Tibor
+AU  - Hutter, Frank
+JO  - Nature
+PY  - 2025
+VL  - 637
+SP  - 319
+EP  - 326
+DO  - 10.1038/s41586-024-08328-6
 ER  - 
 
 TY  - CONF
@@ -53,6 +94,30 @@ EP  - 2830
 ER  - 
 
 TY  - JOUR
+TI  - The impact of feature scaling in machine learning: Effects on regression and classification tasks
+AU  - Pinheiro, João Manoel Herrera
+AU  - de Oliveira, Suzana Vilas Boas
+AU  - Silva, Thiago Henrique Segreto
+AU  - Saraiva, Pedro Antonio Rabelo
+AU  - de Souza, Enzo Ferreira
+AU  - Ambrósio, Leonardo André
+AU  - Becker, Marcelo
+JO  - IEEE Access
+PY  - 2025
+VL  - 13
+SP  - 199903
+EP  - 199931
+DO  - 10.1109/ACCESS.2025.3635541
+ER  - 
+
+TY  - BOOK
+TI  - Exploratory data analysis
+AU  - Tukey, John W.
+PB  - Addison-Wesley
+PY  - 1977
+ER  - 
+
+TY  - JOUR
 TI  - A new family of power transformations to improve normality or symmetry
 AU  - Yeo, In-Kwon
 AU  - Johnson, Richard A.
@@ -65,34 +130,28 @@ EP  - 959
 DO  - 10.1093/biomet/87.4.954
 ER  - 
 
-TY  - BOOK
-TI  - Exploratory data analysis
-AU  - Tukey, John W.
-PB  - Addison-Wesley
-PY  - 1977
-ER  - 
-
-TY  - BOOK
-TI  - The elements of statistical learning: Data mining, inference, and prediction
-AU  - Hastie, Trevor
-AU  - Tibshirani, Robert
-AU  - Friedman, Jerome
-PB  - Springer
-PY  - 2009
-ED  - 2nd
-DO  - 10.1007/978-0-387-84858-7
+TY  - JOUR
+TI  - A survey of cross-validation procedures for model selection
+AU  - Arlot, Sylvain
+AU  - Celisse, Alain
+JO  - Statistics Surveys
+PY  - 2010
+VL  - 4
+SP  - 40
+EP  - 79
+DO  - 10.1214/09-SSU049
 ER  - 
 
 TY  - JOUR
-TI  - Random search for hyper-parameter optimization
-AU  - Bergstra, James
-AU  - Bengio, Yoshua
-JO  - Journal of Machine Learning Research
-PY  - 2012
-VL  - 13
-IS  - 10
-SP  - 281
-EP  - 305
+TI  - The coefficient of determination R-squared is more informative than SMAPE, MAE, MAPE, MSE and RMSE in regression analysis evaluation
+AU  - Chicco, Davide
+AU  - Warrens, Matthijs J.
+AU  - Jurman, Giuseppe
+JO  - PeerJ Computer Science
+PY  - 2021
+VL  - 7
+M1  - e623
+DO  - 10.7717/peerj-cs.623
 ER  - 
 
 TY  - JOUR
@@ -112,18 +171,6 @@ DO  - 10.1145/2382577.2382579
 ER  - 
 
 TY  - JOUR
-TI  - The coefficient of determination R-squared is more informative than SMAPE, MAE, MAPE, MSE and RMSE in regression analysis evaluation
-AU  - Chicco, Davide
-AU  - Warrens, Matthijs J.
-AU  - Jurman, Giuseppe
-JO  - PeerJ Computer Science
-PY  - 2021
-VL  - 7
-M1  - e623
-DO  - 10.7717/peerj-cs.623
-ER  - 
-
-TY  - JOUR
 TI  - Advantages of the mean absolute error (MAE) over the root mean squared error (RMSE) in assessing average model performance
 AU  - Willmott, Cort J.
 AU  - Matsuura, Kenji
@@ -134,18 +181,6 @@ IS  - 1
 SP  - 79
 EP  - 82
 DO  - 10.3354/cr030079
-ER  - 
-
-TY  - JOUR
-TI  - A survey of cross-validation procedures for model selection
-AU  - Arlot, Sylvain
-AU  - Celisse, Alain
-JO  - Statistics Surveys
-PY  - 2010
-VL  - 4
-SP  - 40
-EP  - 79
-DO  - 10.1214/09-SSU049
 ER  - 
 
 TY  - JOUR
