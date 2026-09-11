@@ -5,3 +5,4 @@ step_number,stage_name,record_count,loss_count,loss_reason,notes
 4,여행자 설문(tn_traveller_master) 결합 건수,2880,0,-,"1:1 고유 매칭 완료 (TRAVELER_ID 2,880명 고유, 결합 실패 0건)"
 5,4개 지출 테이블 집계 결합 건수,2880,0,-,"활동(ACT)·숙박(LOD)·이동(MVM)·사전(ADV) 지출 합산 결합 완료"
 6,결측치 검사 및 정제 후 최종 표본,2880,0,-,"14개 입력변수 및 타깃변수 결측 0건 확인 (최종 표본 N = 2,880)"
+

@@ -17,3 +17,4 @@ TOTAL_EXPENDITURE,타깃변수,4개 지출 테이블 통합,float64,"3,000 ~ 5,3
 VISIT_AREA_CNT,사후변수,tn_visit_area_info.csv,int64,"1 ~ 20 (개소)",여행 중 실제 방문한 총 장소 수,여행 종료 후,X,사후 결과 변수로 투입 시 Target Leakage 발생 (+0.4376 상관계수)
 AVG_STAY_TIME,사후변수,tn_visit_area_info.csv,float64,"20.0 ~ 300.0 (분)",방문지당 실제 평균 체류시간,여행 종료 후,X,사후 결과 변수로 투입 시 Target Leakage 발생
 AVG_SATISFACTION,사후변수,tn_visit_area_info.csv,float64,"1.0 ~ 5.0 (점)",방문지에 대한 여행자의 사후 만족도 평점,여행 종료 후,X,사후 결과 변수로 투입 시 Target Leakage 발생
+

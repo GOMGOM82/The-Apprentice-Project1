@@ -43,3 +43,4 @@ $$\text{TOTAL\_EXPENDITURE} = \text{ACT\_SUM} + \text{LOD\_SUM} + \text{MVM\_SUM
    - 보고서에서는 이를 숨기지 않고, "타깃의 일부 구성요소가 알려진 상태에서의 조건부 예측(Conditional Prediction with Known Component)"임을 솔직하게 기술합니다.
 3. **영수증 미인증 소비의 한계**:
    - 영수증이 발행되지 않은 현금 거래나 설문 미기입 내역은 관측되지 않을 수 있음을 연구 한계로 명시합니다.
+

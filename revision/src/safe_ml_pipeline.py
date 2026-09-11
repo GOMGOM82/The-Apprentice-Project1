@@ -136,6 +136,7 @@ def run_safe_pipeline():
             "학습세트_표본수": len(X_train),
             "평가세트명": "내부 비교세트 H (Val)",
             "평가세트_표본수": len(X_val),
+            "테스트세트_선정방식": "무작위 셔플(시드 42) 기반 20% 비복원 임의추출 (576건 격리보존)",
             "RMSE_KRW": round(rf_val_rmse, 1),
             "MAE_KRW": round(rf_val_mae, 1),
             "R2": round(rf_val_r2, 4),
@@ -146,6 +147,7 @@ def run_safe_pipeline():
             "학습세트_표본수": len(X_train),
             "평가세트명": "내부 비교세트 H (Val)",
             "평가세트_표본수": len(X_val),
+            "테스트세트_선정방식": "무작위 셔플(시드 42) 기반 20% 비복원 임의추출 (576건 격리보존)",
             "RMSE_KRW": round(lgb_val_rmse, 1),
             "MAE_KRW": round(lgb_val_mae, 1),
             "R2": round(lgb_val_r2, 4),
@@ -156,6 +158,7 @@ def run_safe_pipeline():
             "학습세트_표본수": len(X_train),
             "평가세트명": "내부 비교세트 H (Val)",
             "평가세트_표본수": len(X_val),
+            "테스트세트_선정방식": "무작위 셔플(시드 42) 기반 20% 비복원 임의추출 (576건 격리보존)",
             "RMSE_KRW": round(lgb_t_val_rmse, 1),
             "MAE_KRW": round(lgb_t_val_mae, 1),
             "R2": round(lgb_t_val_r2, 4),
@@ -435,3 +438,4 @@ def run_safe_pipeline():
 
 if __name__ == "__main__":
     run_safe_pipeline()
+

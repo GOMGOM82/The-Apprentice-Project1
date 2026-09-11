@@ -11,3 +11,4 @@ ISSUE-09,"집단 평균 오차(5천원)와 개인별 예측 오차(MAE 7만~16�
 ISSUE-10,"순수 성향(8개)만으로 지출액의 51.8%를 설명한다는 과장된 주장",직접 확인,D:\paper\20260911\01_데이터셋_획득_및_문제정의.md,"X 14개 변수 구성: 성향 8개 + 인구통계 3개 + 여행계획 3개","14개 변수 전체가 투입된 결과이며, 여행일수·동반자수·사전결제액의 기여도가 큼.","연구 질문을 '사전 성향 + 인구통계 프로필 + 계획 정보'의 결합 예측으로 객관화하고 변수 제거 실험(Ablation) 수행"
 ISSUE-11,"TRAVEL_DAYS 및 ADV_CONSUME_KRW의 사전 이용 가능성 타당성",직접 확인,D:\paper\b\src\data\travel_dataset.py,"lines 67-70: TRAVEL_DAYS 계산, lines 38: adv_c 합산","계획 일수와 사전 예약금은 여행 출발 전 확정되는 정보이나, 타깃의 구성요소가 포함됨.","사전 예약 결제액이 타깃의 일부 구성요소임을 투명하게 밝히고 정보 누수가 아닌 사전 계획 정보임을 논리적으로 규정"
 ISSUE-12,"LightGBM에서 StandardScaler 적용 시 극미한 검증 오차 차이 발생 원인",직접 확인,D:\paper\b\src\models\ml_pipeline.py,execute_scaling_comparison(),"Raw RMSE 289,370.7원 vs StandardScaler RMSE 289,168.1원 (차이 202.6원, 0.07%)","트리 모델의 단조 불변성에도 불구하고 LightGBM의 256개 히스토그램 빈 경계 부동소수점 양자화로 미세 차이 발생.","트리의 수학적 스케일 불변성 원리와 LightGBM의 히스토그램 binning 수치 근사 차이를 이론적으로 정확히 설명"
+

@@ -38,3 +38,4 @@ frozen_model_specification:
       rmse_krw: 236844.3
       r2: 0.5183
       note: "Classified as legacy/exploratory historical reference under Directive Section 5.3"
+
