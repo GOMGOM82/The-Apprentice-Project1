@@ -1,0 +1,61 @@
+project:
+  name: "AI-Hub Travel Expenditure Prediction Pipeline"
+  source: "AI-Hub #71778 국내 여행로그 데이터(동부권, 2023)"
+  version: "revision-2.0"
+  random_seed: 42
+
+data:
+  raw_records: 2880
+  features_allowlist:
+    - "TRAVEL_STYL_1"
+    - "TRAVEL_STYL_2"
+    - "TRAVEL_STYL_3"
+    - "TRAVEL_STYL_4"
+    - "TRAVEL_STYL_5"
+    - "TRAVEL_STYL_6"
+    - "TRAVEL_STYL_7"
+    - "TRAVEL_STYL_8"
+    - "GENDER"
+    - "AGE_GRP"
+    - "INCOME"
+    - "TRAVEL_COMPANIONS_NUM"
+    - "TRAVEL_DAYS"
+    - "ADV_CONSUME_KRW"
+  target: "TOTAL_EXPENDITURE"
+  excluded_post_trip_features:
+    - "VISIT_AREA_CNT"
+    - "AVG_STAY_TIME"
+    - "AVG_SATISFACTION"
+
+splitting:
+  strategy: "3-way holdout (60:20:20)"
+  development_samples: 2304
+  train_samples: 1728
+  validation_samples: 576
+  test_samples: 576
+  test_isolation: "Locked (Strictly No Test Evaluation without explicit user authorization)"
+  internal_comparison_set_H: "val_dataset_3way_seed42.csv (576 samples)"
+
+scaling_candidates:
+  mandatory:
+    - "Raw (No Scaling)"
+    - "StandardScaler"
+    - "MinMaxScaler"
+    - "RobustScaler"
+  extended_robust:
+    - "QuantileTransformer (Normal)"
+    - "PowerTransformer (Yeo-Johnson)"
+    - "Adaptive Winsorized RobustScaler"
+
+hyperparameter_grid:
+  model: "LightGBM Regressor"
+  n_estimators: [50, 100, 200]
+  max_depth: [3, 5, 8, -1]
+  learning_rate: [0.03, 0.05, 0.1]
+  num_leaves: [15, 31, 63]
+  primary_metric: "Validation RMSE (KRW)"
+  secondary_metrics: ["Validation MAE", "Validation R2"]
+
+evaluation_policy:
+  path: "Path B (Legacy Exploratory Reference & Locked Test)"
+  test_unlock_requires_user_approval: true

@@ -1,0 +1,13 @@
+{
+  "evaluation_path": "Path B (Legacy Exploratory Reference)",
+  "test_status": "Locked under Directive Section 5.3",
+  "sample_size": 576,
+  "metrics": {
+    "MAE_KRW": 141480.6,
+    "Median_AE_KRW": 83896.3,
+    "MSE": 56100000000.0,
+    "RMSE_KRW": 236844.3,
+    "R2": 0.5183
+  },
+  "academic_disclosure": "These figures represent historical exploratory baseline results from previous unfreeze; under strict 1-time holdout rules, they are reported with explicit methodological limitations rather than pristine final verification."
+}

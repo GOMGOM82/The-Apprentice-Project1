@@ -1,0 +1,6 @@
+﻿run_id,phase,description,status
+RUN-STEP2-INTERNAL,Step 2,Internal split comparison on H,COMPLETED
+RUN-STEP3-GRID,Step 3,108-parameter grid search & redundancy audit,COMPLETED
+RUN-STEP4-SCALERS,Step 4,7 Scalers comparison + KNN contrast,COMPLETED
+RUN-ABLATION,Step 1 & 3,Feature ablation study (styles incremental gain),COMPLETED
+RUN-STEP5-LEGACY,Step 5,Legacy test metrics preservation and group separation,COMPLETED

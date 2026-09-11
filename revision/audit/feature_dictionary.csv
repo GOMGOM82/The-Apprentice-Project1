@@ -1,0 +1,19 @@
+column_name,category,source_table,data_type,scale_or_range,description,availability_timing,used_in_model,exclusion_reason
+TRAVEL_STYL_1,사전성향,tn_traveller_master.csv,int64,"1~7 (리커트)",여행 스타일 문항 1: 자연 vs 도시 지향성,출발 전,O,-
+TRAVEL_STYL_2,사전성향,tn_traveller_master.csv,int64,"1~7 (리커트)",여행 스타일 문항 2: 숙박 vs 당일 지향성,출발 전,O,-
+TRAVEL_STYL_3,사전성향,tn_traveller_master.csv,int64,"1~7 (리커트)",여행 스타일 문항 3: 새로운 지역 vs 익숙한 지역,출발 전,O,-
+TRAVEL_STYL_4,사전성향,tn_traveller_master.csv,int64,"1~7 (리커트)",여행 스타일 문항 4: 휴식/휴양 vs 체험/활동 지향성,출발 전,O,-
+TRAVEL_STYL_5,사전성향,tn_traveller_master.csv,int64,"1~7 (리커트)",여행 스타일 문항 5: 잘 알려진 곳 vs 덜 알려진 숨은 명소,출발 전,O,-
+TRAVEL_STYL_6,사전성향,tn_traveller_master.csv,int64,"1~7 (리커트)",여행 스타일 문항 6: 계획에 따른 vs 상황에 따른 즉흥 여행,출발 전,O,-
+TRAVEL_STYL_7,사전성향,tn_traveller_master.csv,int64,"1~7 (리커트)",여행 스타일 문항 7: 사진 촬영 중요 vs 현장 감상 중요,출발 전,O,-
+TRAVEL_STYL_8,사전성향,tn_traveller_master.csv,int64,"1~7 (리커트)",여행 스타일 문항 8: 가성비 숙소/소비 vs 고급/플렉스 지향성,출발 전,O,-
+GENDER,인구통계,tn_traveller_master.csv,int64,"0: 남성, 1: 여성",여행자 성별,출발 전,O,-
+AGE_GRP,인구통계,tn_traveller_master.csv,int64,"20, 30, 40, 50, 60",여행자 연령대 구간,출발 전,O,-
+INCOME,인구통계,tn_traveller_master.csv,int64,"1~12 (월 소득 구간)",여행자 개인 월평균 소득 구간 (1: 100만 이하 ~ 12: 1000만 이상),출발 전,O,-
+TRAVEL_COMPANIONS_NUM,여행계획,tn_traveller_master.csv,int64,"0~16 (명)",사전 계획 동반자 인원수 (0: 나홀로 여행),출발 전,O,-
+TRAVEL_DAYS,여행계획,tn_travel.csv,int64,"1~8 (일)",계획 여행 일정 기간 (TRAVEL_END_YMD - TRAVEL_START_YMD + 1),출발 전,O,-
+ADV_CONSUME_KRW,여행계획,tn_adv_consume_his.csv,float64,"0 ~ 880,000 (원)",출발 전 사전 확정 예약 결제액 (교통·숙박 등),출발 전,O,-
+TOTAL_EXPENDITURE,타깃변수,4개 지출 테이블 통합,float64,"3,000 ~ 5,340,850 (원)",여행 전체 관측 지출액 (활동+숙박+이동+사전 합산),여행 종료 후,타깃,-
+VISIT_AREA_CNT,사후변수,tn_visit_area_info.csv,int64,"1 ~ 20 (개소)",여행 중 실제 방문한 총 장소 수,여행 종료 후,X,사후 결과 변수로 투입 시 Target Leakage 발생 (+0.4376 상관계수)
+AVG_STAY_TIME,사후변수,tn_visit_area_info.csv,float64,"20.0 ~ 300.0 (분)",방문지당 실제 평균 체류시간,여행 종료 후,X,사후 결과 변수로 투입 시 Target Leakage 발생
+AVG_SATISFACTION,사후변수,tn_visit_area_info.csv,float64,"1.0 ~ 5.0 (점)",방문지에 대한 여행자의 사후 만족도 평점,여행 종료 후,X,사후 결과 변수로 투입 시 Target Leakage 발생

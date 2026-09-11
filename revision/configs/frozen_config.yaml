@@ -1,0 +1,40 @@
+frozen_model_specification:
+  status: "Frozen (Ready for pretest checklist gating)"
+  pipeline_version: "2.0-audited"
+  selection_date: "2026-09-11"
+  selection_criterion: "Lowest Validation RMSE on 576 holdout validation samples"
+  
+  preprocessor:
+    name: "StandardScaler"
+    library: "scikit-learn"
+    fit_scope: "X_train (1,728 samples only)"
+    leakage_prevention: "Fitted strictly on training partition, transform only on validation/test"
+
+  model:
+    algorithm: "LightGBM Regressor"
+    version: "lightgbm 4.x"
+    objective: "regression (L2 squared error loss)"
+    hyperparameters:
+      n_estimators: 100
+      max_depth: 3
+      learning_rate: 0.03
+      num_leaves: 15
+      random_state: 42
+      verbose: -1
+    effective_degrees_of_freedom_note: "Under max_depth=3, the theoretical maximum leaf count is 2^3=8. Thus num_leaves=15 is automatically bounded at <= 8 leaves."
+
+  validation_performance:
+    val_rmse_krw: 289168.1
+    val_mae_krw: 138466.0
+    val_r2: 0.3460
+    train_val_gap_r2: 0.2110
+
+  test_evaluation_status:
+    mode: "Locked"
+    authorized: false
+    legacy_reference_metrics:
+      mae_krw: 141480.6
+      median_ae_krw: 83896.3
+      rmse_krw: 236844.3
+      r2: 0.5183
+      note: "Classified as legacy/exploratory historical reference under Directive Section 5.3"
